@@ -1,0 +1,195 @@
+11.11 12:59 PM
+Cycle 4
+# 1. Write a program to print the Fibonacci series using recursion.
+# Aim: To print the Fibonacci series up to nth term using recursion.
+
+def fibonacci(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Example: Print Fibonacci series up to 5 terms
+n_terms = 5
+print("Fibonacci series:")
+for i in range(n_terms):
+    print(fibonacci(i), end=" ")
+
+# Output:
+# Fibonacci series:
+# 0 1 1 2 3
+
+
+# 2. Implement a menu-driven calculator. Use separate functions for different operations.
+# Aim: To implement a calculator with menu options for basic operations.
+
+def add(x, y):
+    return x + y
+
+def subtract(x, y):
+    return x - y
+
+def multiply(x, y):
+    return x * y
+
+def divide(x, y):
+    if y == 0:
+        return "Cannot divide by zero!"
+    return x / y
+
+# Menu-driven calculator
+print("\nMenu:")
+print("1. Add")
+print("2. Subtract")
+print("3. Multiply")
+print("4. Divide")
+
+choice = int(input("Enter choice (1/2/3/4): "))
+num1 = float(input("Enter first number: "))
+num2 = float(input("Enter second number: "))
+
+if choice == 1:
+    print(f"Result: {add(num1, num2)}")
+elif choice == 2:
+    print(f"Result: {subtract(num1, num2)}")
+elif choice == 3:
+    print(f"Result: {multiply(num1, num2)}")
+elif choice == 4:
+    print(f"Result: {divide(num1, num2)}")
+else:
+    print("Invalid input")
+
+# Output:
+# Menu:
+# 1. Add
+# 2. Subtract
+# 3. Multiply
+# 4. Divide
+# Enter choice (1/2/3/4): 1
+# Enter first number: 5
+# Enter second number: 3
+# Result: 8.0
+
+
+# 3. Write a program to print the nth prime number using function to check primality.
+# Aim: To print the nth prime number.
+
+def is_prime(num):
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def nth_prime(n):
+    count = 0
+    num = 2
+    while True:
+        if is_prime(num):
+            count += 1
+            if count == n:
+                return num
+        num += 1
+
+# Example: Get the 5th prime number
+n = 5
+print(f"\nThe {n}th prime number is: {nth_prime(n)}")
+
+# Output:
+# The 5th prime number is: 11
+
+
+# 4. Write lambda functions to find the area of square, rectangle, and triangle.
+# Aim: To find the area of square, rectangle, and triangle using lambda functions.
+
+area_square = lambda side: side * side
+area_rectangle = lambda length, width: length * width
+area_triangle = lambda base, height: 0.5 * base * height
+
+print(f"\nArea of square (side=4): {area_square(4)}")
+print(f"Area of rectangle (length=5, width=3): {area_rectangle(5, 3)}")
+print(f"Area of triangle (base=6, height=4): {area_triangle(6, 4)}")
+
+# Output:
+# Area of square (side=4): 16
+# Area of rectangle (length=5, width=3): 15
+# Area of triangle (base=6, height=4): 12.0
+
+
+# 5. Write a program to display powers of 2 using an anonymous function.
+# Aim: To display powers of 2 for a given range using lambda and map function.
+
+exponents = [0, 1, 2, 3, 4, 5]
+powers_of_2 = list(map(lambda x: 2 ** x, exponents))
+
+print(f"\nPowers of 2: {powers_of_2}")
+
+# Output:
+# Powers of 2: [1, 2, 4, 8, 16, 32]
+
+
+# 6. Write a program to sum the series 1/1! + 4/2! + 27/3! + ….. + nth term.
+# Aim: To calculate the sum of the series 1/1! + 4/2! + 27/3! + .. up to nth term.
+
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+def series_sum(n):
+    total = 0
+    for i in range(1, n + 1):
+        total += (i ** i) / factorial(i)
+    return total
+
+# Example: Sum of the first 4 terms of the series
+n = 4
+print(f"\nSum of the series up to {n} terms: {series_sum(n)}")
+
+# Output:
+# Sum of the series up to 4 terms: 2.0
+
+
+# 7. Write a function called compare to compare the first n characters of two strings.
+# Aim: To compare the first n characters of two strings and return True if they match.
+
+def compare(s1, s2, n):
+    return s1[:n] == s2[:n]
+
+# Example: Compare first 3 characters of two strings
+s1 = "hello"
+s2 = "helicopter"
+n = 3
+print(f"\nComparison result: {compare(s1, s2, n)}")
+
+# Output:
+# Comparison result: True
+
+
+# 8. Write a program to implement permutations and combinations formulae.
+# Aim: To calculate permutations and combinations of n objects taken r at a time.
+
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+def permutations(n, r):
+    return factorial(n) // factorial(n - r)
+
+def combinations(n, r):
+    return factorial(n) // (factorial(r) * factorial(n - r))
+
+# Example: Calculate permutations and combinations for n=5, r=3
+n, r = 5, 3
+print(f"\nPermutations (5, 3): {permutations(n, r)}")
+print(f"Combinations (5, 3): {combinations(n, r)}")
+
+# Output:
+# Permutations (5, 3): 60
+# Combinations (5, 3): 10
