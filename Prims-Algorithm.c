@@ -47,7 +47,6 @@ int main() {
         parent[i] = -1; // Initialize parent array to -1
     }
 
-    // Read the adjacency matrix from the file and create edge list
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             int weight;
