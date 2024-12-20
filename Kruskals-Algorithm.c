@@ -1,63 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int i, j, k, a, b, u, v, n, ne = 1;
-int min, mincost = 0, cost[9][9], parent[9];
+#define MAX 100
+#define INF 999
 
-int find(int);
-int uni(int, int);
+int parent[MAX];
 
-void main() {
-    printf("\nEnter the number of vertices: ");
-    scanf("%d", &n);
+typedef struct {
+    int u, v, weight;
+} Edge;
 
-    printf("\nEnter the cost adjacency matrix:\n");
-    for (i = 1; i <= n; i++) {
-        for (j = 1; j <= n; j++) {
-            scanf("%d", &cost[i][j]);
-            if (cost[i][j] == 0) {
-                cost[i][j] = 999; // Represent no edge with a large value
+Edge edges[MAX];
+int edgeCount = 0;
+
+int find(int i) {
+    if (parent[i] == -1) {
+        return i;
+    }
+    return find(parent[i]);
+}
+
+void unionSets(int u, int v) {
+    parent[v] = u;
+}
+
+int compare(const void *a, const void *b) {
+    return ((Edge *)a)->weight - ((Edge *)b)->weight;
+}
+
+int main() {
+    FILE *file;
+    int n, i, j, mincost = 0;
+
+    // Open the file containing the graph
+    file = fopen("graph.txt", "r");
+    if (file == NULL) {
+        printf("Error: Could not open file.\n");
+        return 1;
+    }
+
+    // Read the number of vertices
+    fscanf(file, "%d", &n);
+
+    // Initialize parent array
+    for (i = 0; i < n; i++) {
+        parent[i] = -1; // Initialize parent array to -1
+    }
+
+    // Read the cost adjacency matrix and create edge list
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            int weight;
+            fscanf(file, "%d", &weight);
+            if (weight != 0 && i < j) { // Avoid duplicate edges
+                edges[edgeCount].u = i;
+                edges[edgeCount].v = j;
+                edges[edgeCount].weight = weight;
+                edgeCount++;
             }
         }
     }
+    fclose(file); // Close the file after reading
+
+    // Sort edges based on weight
+    qsort(edges, edgeCount, sizeof(edges[0]), compare);
 
     printf("The edges of the Minimum Cost Spanning Tree are:\n");
-    while (ne < n) {
-        for (i = 1, min = 999; i <= n; i++) {
-            for (j = 1; j <= n; j++) {
-                if (cost[i][j] < min) {
-                    min = cost[i][j];
-                    a = u = i;
-                    b = v = j;
-                }
-            }
+    for (i = 0; i < edgeCount; i++) {
+        int u = find(edges[i].u);
+        int v = find(edges[i].v);
+
+        if (u != v) { // If they are in different sets
+            printf("%d edge (%d,%d) = %d\n", i + 1, edges[i].u, edges[i].v, edges[i].weight);
+            mincost += edges[i].weight;
+            unionSets(u, v);
         }
-
-        u = find(u);
-        v = find(v);
-
-        if (uni(u, v)) {
-            printf("%d edge (%d,%d) = %d\n", ne++, a, b, min);
-            mincost += min;
-        }
-
-        cost[a][b] = cost[b][a] = 999; // Mark edge as used
     }
 
     printf("\nMinimum cost = %d\n", mincost);
-}
-
-int find(int i) {
-    while (parent[i]) {
-        i = parent[i];
-    }
-    return i;
-}
-
-int uni(int i, int j) {
-    if (i != j) {
-        parent[j] = i;
-        return 1;
-    }
     return 0;
 }
