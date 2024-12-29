@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+
 #define MAX_SIZE 10
 
 // Stack for DFS
@@ -22,6 +22,11 @@ struct Graph {
     int V;
     struct adj_list *array;
 };
+
+// Boolean definitions
+typedef int bool;
+#define true 1
+#define false 0
 
 // Create a new adjacency list node
 struct adj_list_node *new_adj_list_node(int dest) {
