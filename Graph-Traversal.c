@@ -1,68 +1,58 @@
 #include <stdio.h>
-#include <string.h>
+
 #define MAX 20
 
-int a[MAX][MAX], visited[MAX], n;
-char vertexNames[MAX];
+int adjMatrix[MAX][MAX], visited[MAX], inDegree[MAX], n;
 
-// Function to find the index of a vertex by its name
-int getVertexIndex(char name) {
-    for (int i = 0; i < n; i++) {
-        if (vertexNames[i] == name) return i;
-    }
-    return -1;
-}
-
-// Function to read the adjacency matrix
+// Function to read the adjacency matrix for the graph
 void readGraph() {
     int i, j;
-    char vertex;
 
     printf("Enter the number of vertices:\n");
     scanf("%d", &n);
 
-    printf("Enter the vertex names (e.g., a b c d):\n");
+    printf("Enter the adjacency matrix (0 or 1):\n");
     for (i = 0; i < n; i++) {
-        scanf(" %c", &vertexNames[i]);
-    }
-
-    printf("Enter the adjacency matrix:\n");
-    for (i = 0; i < n; i++) {
-        printf("Enter row for vertex %c:\n", vertexNames[i]);
         for (j = 0; j < n; j++) {
-            scanf("%d", &a[i][j]);
+            scanf("%d", &adjMatrix[i][j]);
         }
     }
 
     printf("\nThe adjacency matrix is:\n");
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            printf("%d ", a[i][j]);
+            printf("%d ", adjMatrix[i][j]);
         }
         printf("\n");
     }
 }
 
-// BFS Function
-void bfs(char startVertex) {
+// BFS Function for Tree Traversal
+void bfs(int startVertex) {
     int queue[MAX], front = 0, rear = -1, i;
-    int start = getVertexIndex(startVertex);
 
-    if (start == -1) {
+    if (startVertex < 0 || startVertex >= n) {
         printf("Invalid starting vertex.\n");
         return;
     }
 
-    printf("\nBFS Traversal: ");
-    visited[start] = 1;
-    queue[++rear] = start;
+    // Reset visited array
+    for (i = 0; i < n; i++) {
+        visited[i] = 0;
+    }
+
+    printf("\nBFS Traversal starting from vertex %d: ", startVertex);
+
+    visited[startVertex] = 1;
+    queue[++rear] = startVertex;
 
     while (front <= rear) {
         int current = queue[front++];
-        printf("%c ", vertexNames[current]);
+
+        printf("%d ", current);
 
         for (i = 0; i < n; i++) {
-            if (a[current][i] == 1 && !visited[i]) {
+            if (adjMatrix[current][i] == 1 && !visited[i]) {
                 queue[++rear] = i;
                 visited[i] = 1;
             }
@@ -71,28 +61,33 @@ void bfs(char startVertex) {
     printf("\n");
 }
 
-// DFS Function
-void dfs(char startVertex) {
+// DFS Function for Tree Traversal
+void dfs(int startVertex) {
     int stack[MAX], top = -1, i;
-    int start = getVertexIndex(startVertex);
 
-    if (start == -1) {
+    if (startVertex < 0 || startVertex >= n) {
         printf("Invalid starting vertex.\n");
         return;
     }
 
-    printf("\nDFS Traversal: ");
-    stack[++top] = start;
+    // Reset visited array
+    for (i = 0; i < n; i++) {
+        visited[i] = 0;
+    }
+
+    printf("\nDFS Traversal starting from vertex %d: ", startVertex);
+
+    stack[++top] = startVertex;
 
     while (top >= 0) {
         int current = stack[top--];
 
         if (!visited[current]) {
-            printf("%c ", vertexNames[current]);
+            printf("%d ", current);
             visited[current] = 1;
 
             for (i = n - 1; i >= 0; i--) {
-                if (a[current][i] == 1 && !visited[i]) {
+                if (adjMatrix[current][i] == 1 && !visited[i]) {
                     stack[++top] = i;
                 }
             }
@@ -101,34 +96,35 @@ void dfs(char startVertex) {
     printf("\n");
 }
 
-// Topological Sort Function
+// Topological Sort (for Directed Acyclic Graph)
 void topologicalSort() {
-    int inDegree[MAX] = {0}, stack[MAX], top = -1, i, j, count = 0;
+    int stack[MAX], top = -1, count = 0;
 
     // Calculate in-degrees
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            if (a[j][i] == 1) {
+    for (int i = 0; i < n; i++) {
+        inDegree[i] = 0;
+        for (int j = 0; j < n; j++) {
+            if (adjMatrix[j][i] == 1) {
                 inDegree[i]++;
             }
         }
     }
 
     // Push nodes with 0 in-degree onto stack
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         if (inDegree[i] == 0) {
             stack[++top] = i;
         }
     }
 
-    printf("\nTopological Order: ");
+    printf("\nTopological Sort: ");
     while (top >= 0) {
         int current = stack[top--];
-        printf("%c ", vertexNames[current]);
+        printf("%d ", current);
         count++;
 
-        for (i = 0; i < n; i++) {
-            if (a[current][i] == 1) {
+        for (int i = 0; i < n; i++) {
+            if (adjMatrix[current][i] == 1) {
                 inDegree[i]--;
                 if (inDegree[i] == 0) {
                     stack[++top] = i;
@@ -144,8 +140,7 @@ void topologicalSort() {
 }
 
 int main() {
-    int i, choice;
-    char startVertex;
+    int i, choice, startVertex;
 
     do {
         // Menu-driven program
@@ -153,23 +148,18 @@ int main() {
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
-        // Reset visited array for each traversal
-        for (i = 0; i < n; i++) {
-            visited[i] = 0;
-        }
-
         switch (choice) {
             case 1:
                 readGraph();
                 break;
             case 2:
-                printf("Enter the starting vertex for BFS: ");
-                scanf(" %c", &startVertex);
+                printf("Enter the starting vertex (0 to %d) for BFS: ", n - 1);
+                scanf("%d", &startVertex);
                 bfs(startVertex);
                 break;
             case 3:
-                printf("Enter the starting vertex for DFS: ");
-                scanf(" %c", &startVertex);
+                printf("Enter the starting vertex (0 to %d) for DFS: ", n - 1);
+                scanf("%d", &startVertex);
                 dfs(startVertex);
                 break;
             case 4:
