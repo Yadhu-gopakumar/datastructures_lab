@@ -5,7 +5,7 @@ struct node {
    struct node *rep;  // Representative (leader) of the set
    struct node *next; // Next element in the set
    int data;          // Data of the node
-} *heads[50], *tails[50];
+} *heads[50];
 
 static int countRoot = 0;  // Track number of sets
 
@@ -15,7 +15,6 @@ void makeSet(int x) {
     new->next = NULL;
     new->data = x;
     heads[countRoot] = new;  // Store head of the set
-    tails[countRoot] = new;  // Store tail of the set
     countRoot++;
 }
 
@@ -42,28 +41,33 @@ void unionSets(int a, int b) {
     
     // If the representatives are different, merge the sets
     if (rep1 != rep2) {
-        // Remove the set of `b` from the disjoint set list
+        // Find the position of the set with `rep2` in the `heads` array
         int pos = -1;
-        for (int i = 0; i < countRoot; i++) {
-            if (heads[i] == rep2) {
+        for (int i = 0; i < countRoot; i++)
+         {
+            if (heads[i] == rep2) 
+            {
                 pos = i;
                 break;
             }
         }
         
         if (pos != -1) {
-            // Remove set `b` from the list
+            // Remove the set of `rep2` from the `heads` list
             for (int i = pos; i < countRoot - 1; i++) {
                 heads[i] = heads[i + 1];
-                tails[i] = tails[i + 1];
             }
             countRoot--;
         }
         
-        // Attach `rep2`'s set to `rep1`'s set
-        tails[pos]->next = rep2;  // Connect the last node of `rep1` to the first node of `rep2`
-        
-        // Update the representative of `rep2`'s nodes to `rep1`
+        // Attach all nodes of `rep2` to the end of `rep1`'s set
+        struct node *tmp = rep1;
+        while (tmp->next != NULL) {
+            tmp = tmp->next;
+        }
+        tmp->next = rep2;
+
+        // Update the representative of all nodes in `rep2` to `rep1`
         while (rep2 != NULL) {
             rep2->rep = rep1;
             rep2 = rep2->next;
@@ -96,7 +100,7 @@ void printSets() {
 }
 
 int main() {
-    int choice, x, y, flag = 0;
+    int choice, x, y;
 
     do {
         printf("\n1. Make Set\n2. Display Set Representatives\n3. Union\n4. Find Set\n5. Display Sets\n6. Exit\n");
