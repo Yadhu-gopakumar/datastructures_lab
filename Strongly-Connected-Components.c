@@ -2,124 +2,124 @@
 #include <stdlib.h>
 #define MAX 100
 
-// Stack structure
-struct Stack {
-    int data[MAX];
-    int top;
-};
-
-// Graph structure
-int adj[MAX][MAX];         // Adjacency matrix for original graph
-int transpose[MAX][MAX];   // Adjacency matrix for transposed graph
-int n;                     // Number of vertices
-int visited[MAX];          // Visited array (1 for visited, 0 for not visited)
+int adj[MAX][MAX];       // Adjacency matrix
+int transpose[MAX][MAX]; // Transposed adjacency matrix
+int visited[MAX];        // Visited array
+int stack[MAX];          // Stack for storing vertices
+int top = -1;            // Stack pointer
+int n;                   // Number of vertices
 
 // Stack operations
-void push(struct Stack *stack, int val) {
-    stack->data[++stack->top] = val;
+void push(int vertex)
+{
+   stack[++top] = vertex;
 }
 
-int pop(struct Stack *stack) {
-    return stack->data[stack->top--];
+int pop()
+{
+   return stack[top--];
 }
 
-int isEmpty(struct Stack *stack) {
-    return stack->top == -1;
+// Depth First Search (DFS) for filling the stack
+void dfsFillStack(int graph[MAX][MAX], int vertex)
+{
+   visited[vertex] = 1;
+   for (int i = 0; i < n; i++)
+   {
+      if (graph[vertex][i] && !visited[i])
+      {
+         dfsFillStack(graph, i);
+      }
+   }
+   // Push vertex to stack after exploring all neighbors
+   push(vertex);
 }
 
-// Depth First Search (DFS) on original graph
-void dfsOriginal(int vertex, struct Stack *stack) {
-    visited[vertex] = 1;
-
-    for (int i = 0; i < n; i++) {
-        if (adj[vertex][i] && !visited[i]) {
-            dfsOriginal(i, stack);
-        }
-    }
-
-    // Push the vertex onto the stack after finishing all its neighbors
-    push(stack, vertex);
-}
-
-// Depth First Search (DFS) on transposed graph
-void dfsTranspose(int vertex) {
-    printf("%d ", vertex);
-    visited[vertex] = 1;
-
-    for (int i = 0; i < n; i++) {
-        if (transpose[vertex][i] && !visited[i]) {
-            dfsTranspose(i);
-        }
-    }
+// Depth First Search (DFS) to find SCCs
+void dfsPrintSCC(int graph[MAX][MAX], int vertex)
+{
+   printf("%d ", vertex); // Print the vertex in the current SCC
+   visited[vertex] = 1;
+   for (int i = 0; i < n; i++)
+   {
+      if (graph[vertex][i] && !visited[i])
+      {
+         dfsPrintSCC(graph, i);
+      }
+   }
 }
 
 // Transpose the graph
-void transposeGraph() {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            transpose[i][j] = adj[j][i];
-        }
-    }
+void transposeGraph()
+{
+   for (int i = 0; i < n; i++)
+   {
+      for (int j = 0; j < n; j++)
+      {
+         transpose[i][j] = adj[j][i];
+      }
+   }
 }
 
-// Kosaraju's Algorithm
-void findSCCs() {
-    struct Stack stack;
-    stack.top = -1;
+// Find Strongly Connected Components (SCCs)
+void findSCCs()
+{
+   // Step 1: Perform DFS on the original graph and fill the stack
+   for (int i = 0; i < n; i++)
+   {
+      visited[i] = 0; // Reset visited array
+   }
+   for (int i = 0; i < n; i++)
+   {
+      if (!visited[i])
+         dfsFillStack(adj, i);
+   }
 
-    // Step 1: Perform DFS on the original graph and store vertices in stack
-    for (int i = 0; i < n; i++) {
-        visited[i] = 0; // Reset visited array
-    }
+   // Step 2: Transpose the graph
+   transposeGraph();
 
-    for (int i = 0; i < n; i++) {
-        if (!visited[i]) {
-            dfsOriginal(i, &stack);
-        }
-    }
-
-    // Step 2: Transpose the graph
-    transposeGraph();
-
-    // Step 3: Perform DFS on the transposed graph in the order of the stack
-    for (int i = 0; i < n; i++) {
-        visited[i] = 0; // Reset visited array
-    }
-
-    printf("\nStrongly Connected Components:\n");
-    while (!isEmpty(&stack)) {
-        int vertex = pop(&stack);
-        if (!visited[vertex]) {
-            dfsTranspose(vertex);
-            printf("\n");
-        }
-    }
+   // Step 3: Perform DFS on the transposed graph using stack order
+   for (int i = 0; i < n; i++)
+      visited[i] = 0; // Reset visited array
+   printf("Strongly Connected Components:\n");
+   while (top != -1)
+   {
+      int vertex = pop();
+      if (!visited[vertex])
+      {
+         dfsPrintSCC(transpose, vertex);
+         printf("\n"); // Each SCC on a new line
+      }
+   }
 }
 
-int main() {
-    int edges, u, v;
+int main()
+{
+   int edges, u, v;
 
-    printf("Enter the number of vertices: ");
-    scanf("%d", &n);
+   printf("Enter the number of vertices: ");
+   scanf("%d", &n);
 
-    // Initialize adjacency matrices
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            adj[i][j] = 0;
-            transpose[i][j] = 0;
-        }
-    }
+   // Initialize adjacency matrices
+   for (int i = 0; i < n; i++)
+   {
+      for (int j = 0; j < n; j++)
+      {
+         adj[i][j] = 0;
+      }
+   }
 
-    printf("Enter the number of edges: ");
-    scanf("%d", &edges);
+   printf("Enter the number of edges: ");
+   scanf("%d", &edges);
 
-    printf("Enter the edges (u v):\n");
-    for (int i = 0; i < edges; i++) {
-        scanf("%d %d", &u, &v);
-        adj[u][v] = 1; // Directed edge
-    }
+   printf("Enter the edges (u v):\n");
+   for (int i = 0; i < edges; i++)
+   {
+      scanf("%d %d", &u, &v);
+      adj[u][v] = 1; // Directed edge
+   }
 
-    findSCCs();
+   findSCCs();
 
-    return 0;
+   return 0;
 }
