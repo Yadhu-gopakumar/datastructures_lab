@@ -86,11 +86,17 @@ void dfs(int startVertex) {
             printf("%d ", current);
             visited[current] = 1;
 
-            for (i = n - 1; i >= 0; i--) {
-                if (adjMatrix[current][i] == 1 && !visited[i]) {
-                    stack[++top] = i;
+          for (i = 0; i < n; i++) {
+            if (adjMatrix[current][i] == 1 && !visited[i]) {
+                temp[tempCount++] = i;
                 }
             }
+
+// Push vertices from temp array onto the stack in reverse order
+for (int j = tempCount - 1; j >= 0; j--) {
+    stack[++top] = temp[j];
+}
+
         }
     }
     printf("\n");
