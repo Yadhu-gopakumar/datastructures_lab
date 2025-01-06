@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 
 #define MAX 100
 
@@ -19,8 +18,8 @@ int pop() {
 }
 
 // DFS to visit nodes
-void dfs(int v, int vertices, bool visited[], int matrix[MAX][MAX]) {
-    visited[v] = true;
+void dfs(int v, int vertices, int visited[], int matrix[MAX][MAX]) {
+    visited[v] = 1;
 
     for (int i = 0; i < vertices; i++) {
         if (matrix[v][i] && !visited[i]) {
@@ -33,8 +32,8 @@ void dfs(int v, int vertices, bool visited[], int matrix[MAX][MAX]) {
 }
 
 // Print a component
-void printComponent(int v, int vertices, bool visited[], int matrix[MAX][MAX]) {
-    visited[v] = true;
+void printComponent(int v, int vertices, int visited[], int matrix[MAX][MAX]) {
+    visited[v] = 1;
     printf("%d ", v);
 
     for (int i = 0; i < vertices; i++) {
@@ -55,7 +54,7 @@ void transposeGraph(int vertices) {
 
 // Find SCCs using Kosaraju's Algorithm
 void findSCCs(int vertices) {
-    bool visited[MAX] = {false};
+    int visited[MAX] = {0};
 
     // Step 1: Perform DFS and push vertices to stack based on finish time
     for (int i = 0; i < vertices; i++) {
@@ -69,7 +68,7 @@ void findSCCs(int vertices) {
 
     // Step 3: Process all vertices in the order of the stack on the transposed graph
     for (int i = 0; i < vertices; i++) {
-        visited[i] = false;  // Reset visited array
+        visited[i] = 0;  // Reset visited array
     }
 
     printf("Strongly Connected Components:\n");
