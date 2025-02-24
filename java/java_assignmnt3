@@ -1,0 +1,194 @@
+import java.util.Scanner;
+
+class Employee {
+    int empNo;
+    String name;
+    double salary;
+
+    Employee(int empNo, String name, double salary) {
+        this.empNo = empNo;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    void display() {
+        System.out.println("Employee Number: " + empNo);
+        System.out.println("Employee Name: " + name);
+        System.out.println("Employee Salary: " + salary);
+    }
+}
+
+public class EmployeeSearch {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of employees: ");
+        int n = scanner.nextInt();
+        Employee[] employees = new Employee[n];
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("Enter details for employee " + (i + 1) + ":");
+            System.out.print("Employee Number: ");
+            int empNo = scanner.nextInt();
+            scanner.nextLine();  // Consume newline left-over
+            System.out.print("Employee Name: ");
+            String name = scanner.nextLine();
+            System.out.print("Employee Salary: ");
+            double salary = scanner.nextDouble();
+
+            employees[i] = new Employee(empNo, name, salary);
+        }
+
+        System.out.print("Enter the employee number to search: ");
+        int searchEmpNo = scanner.nextInt();
+        boolean found = false;
+
+        for (Employee emp : employees) {
+            if (emp.empNo == searchEmpNo) {
+                emp.display();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Employee not found!");
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+import java.util.Scanner;
+import java.util.ArrayList;
+public class StringIndex{
+	public static void main(String args[]){
+		Scanner s = new Scanner(System.in);
+		ArrayList<String> str=new ArrayList<>();
+		System.out.println("Eneter the number of strings: ");
+		int n = s.nextInt();
+		System.out.println("Eneter the strings: ");
+		for(int i = 0; i < n; i++)
+			str.add(s.next());
+		System.out.println("Eneter the string to search: ");
+		String key=s.next();
+		boolean found=false;
+		for(int i = 0; i < n; i++){
+			if(str.get(i).equals(key)){
+				System.out.println("Found at index: "+i);
+				found=true;
+				break;
+			}
+		}
+		if(!found) System.out.println("String not found!");
+	}
+}
+
+
+
+
+import java.util.Scanner;
+public class StringManipulation{
+	public static void main(String args[]){
+		Scanner s=new Scanner(System.in);
+		System.out.println("Enter a string: ");
+		String str=s.next();
+		System.out.println("length: "+str.length());
+		System.out.println("uppercase: "+str.toUpperCase());
+		System.out.println("lowercase: "+str.toLowerCase());
+		System.out.println("Enter an index to extract: ");
+		int i=s.nextInt();
+		System.out.println("character at "+i+" is "+str.charAt(i));
+		System.out.println("Enter a start and end index to substring: ");
+		int start=s.nextInt();
+		int end=s.nextInt();
+		System.out.println("substring: "+str.substring(start,end));
+	}
+}
+
+
+
+
+import java.util.Scanner;
+
+// Base class
+class Publisher {
+    String publisherName;
+
+    public void readPublisherDetails() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter publisher name: ");
+        publisherName = scanner.nextLine();
+    }
+
+    public void displayPublisherDetails() {
+        System.out.println("Publisher: " + publisherName);
+    }
+}
+
+// Derived class
+class Book extends Publisher {
+    String bookTitle;
+    String author;
+
+    public void readBookDetails() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter book title: ");
+        bookTitle = scanner.nextLine();
+        System.out.print("Enter author name: ");
+        author = scanner.nextLine();
+    }
+
+    public void displayBookDetails() {
+        System.out.println("Title: " + bookTitle);
+        System.out.println("Author: " + author);
+        displayPublisherDetails();
+    }
+}
+
+// Subclass Literature
+class Literature extends Book {
+    String genre = "Literature";
+
+    public void displayGenre() {
+        System.out.println("Genre: " + genre);
+    }
+}
+
+// Subclass Fiction
+class Fiction extends Book {
+    String genre = "Fiction";
+
+    public void displayGenre() {
+        System.out.println("Genre: " + genre);
+    }
+}
+
+public class BookManagementSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter details for Literature book:");
+        Literature literatureBook = new Literature();
+        literatureBook.readPublisherDetails();
+        literatureBook.readBookDetails();
+
+        System.out.println("\nEnter details for Fiction book:");
+        Fiction fictionBook = new Fiction();
+        fictionBook.readPublisherDetails();
+        fictionBook.readBookDetails();
+
+        System.out.println("\n--- Literature Book Details ---");
+        literatureBook.displayBookDetails();
+        literatureBook.displayGenre();
+
+        System.out.println("\n--- Fiction Book Details ---");
+        fictionBook.displayBookDetails();
+        fictionBook.displayGenre();
+
+        scanner.close();
+    }
+}
+
